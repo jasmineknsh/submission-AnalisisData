@@ -33,7 +33,7 @@ def create_hourly_df(hour_df):
     return hourly_df
 
 # Load dataset
-hour_df = pd.read_csv("main_data.csv")
+hour_df = pd.read_csv("https://raw.githubusercontent.com/jasmineknsh/submission-AnalisisData/master/dashboard/main_data.csv")
 
 hour_df["date"] = pd.to_datetime(hour_df["date"])
 
