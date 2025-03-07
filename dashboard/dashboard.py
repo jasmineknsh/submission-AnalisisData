@@ -29,8 +29,7 @@ def create_bywheatersit_df(hour_df):
     return weather_by_season
 
 def create_hourly_df(hour_df):
-    hourly_df = hour_df.groupby(by='hour').agg({
-        'count': 'sum'}).reset_index()
+    hourly_df = hour_df.groupby(by='hour').agg({'count': 'sum'}).reset_index()
     return hourly_df
 
 def create_weekday_df(hour_df):
@@ -55,6 +54,7 @@ daily_hourly_df = create_hourly_df(hour_df)
 daily_weekday_df = create_weekday_df(hour_df)
 byholiday_df = create_holiday_df(hour_df)
 weather_by_season = create_by_season_df(hour_df)
+hourly_df = create_hourly_df(hour_df)
 
 # filter
 min_date = daily_rent_df["date"].min().date()
@@ -135,6 +135,15 @@ with st.container():
     plt.xticks(rotation=45)
     plt.tight_layout()
     st.pyplot(plt)
+    st.write(
+    """
+    Keterangan :   
+    0 = Musim Semi
+    1 = Musim Panas
+    2 = Musim Gugur
+    3 = Musim Dingin 
+    """
+)
 
 with st.expander("ℹ️ Penjelasan"):
     st.write(
@@ -156,5 +165,24 @@ with st.expander("ℹ️ Penjelasan"):
         - Kecepatan angin rendah, tetapi lebih tinggi dari musim gugur.  
         """
     )
+
+# with st.container: # Menggunakan objek kontainer dengan with
+st.header("🕰️ Puncak waktu penyewaan")
+hourly_df = create_hourly_df(hour_df)
+    
+plt.figure(figsize=(12, 6))
+plt.bar(hourly_df['hour'], hourly_df['count'])
+plt.xlabel('Jam')
+plt.ylabel('Jumlah Penyewaan')
+plt.title('Distribusi Penyewaan Sepeda per Jam')
+plt.xticks(range(24))
+st.pyplot(plt)
+
+st.write(
+    """
+    Berdasarkan grafik yang ditampilkan dari analisis dataframe pada kolom hour dapat diketahui pada 08.00 AM, 05.00 PM, 06.00 PM merupakan 3 puncak penyewaan sepeda tertinggi.
+    secara jelas mengindikasikan pola perjalanan komuter. Ini menegaskan bahwa sepeda banyak digunakan sebagai moda transportasi untuk berangkat dan pulang kerja.
+    """
+)
 
 st.caption('Copyright © 2025 Jasmine Kinasih')
