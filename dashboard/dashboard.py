@@ -50,7 +50,7 @@ max_date = daily_rent_df["date"].max().date()
 
 # Sidebar 
 with st.sidebar:
-    st.image("pnyewaSepeda.jpg")
+    st.image("https://raw.githubusercontent.com/jasmineknsh/submission-AnalisisData/master/dashboard/pnyewaSepeda.jpg")
     st.sidebar.header("Filter:")
     start_date, end_date = st.date_input(
         label="Rentang Waktu",
