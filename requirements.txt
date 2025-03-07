@@ -10,4 +10,5 @@ PyQt5==5.15.10
 PyQtWebEngine==5.15.6
 seaborn==0.13.2
 setuptools==75.1.0
+streamlit==1.37.1
 wheel==0.44.0

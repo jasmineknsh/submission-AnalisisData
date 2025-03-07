@@ -147,6 +147,28 @@ with st.expander("ℹ️ Penjelasan"):
         """
     )
 
+# Pola penyewaan sepeda terhadap kondisi cuaca
+st.header("📈 Pola Penyewaan Sepeda per Kondisi Cuaca")
+
+plt.figure(figsize=(15, 6))
+sns.lineplot(x='date', y='count', hue='weathersit', data=hour_df)
+plt.title('Pola Penyewaan Sepeda per Kondisi Cuaca')
+plt.xlabel('Waktu')
+plt.ylabel('Jumlah Penyewaan')
+plt.grid(True)
+st.pyplot(plt)
+
+st.write("Bagaimana pengaruh kondisi cuaca dan musim terhadap pola penyewaan sepeda?")
+with st.expander("ℹ️ Penjelasan"):
+    st.write(
+     """
+     Analisis data menunjukkan bahwa kondisi cuaca dan musim memiliki pengaruh signifikan terhadap pola penyewaan sepeda.
+     Cuaca cerah terbukti menjadi kondisi paling populer, dengan jumlah penyewaan tertinggi. Musim gugur mencatat jumlah penyewaan tertinggi (1,061,129)
+     menunjukkan popularitasnya. Sebaliknya, kondisi cuaca buruk seperti hujan ringan/salju secara signifikan mengurangi jumlah penyewaan. Pola musiman menunjukkan puncak penyewaan di musim gugur dan penurunan di musim semi. Berdasarkan data analisis sebelumnya kondisi cuaca yang nyaman di musim gugur (temperatur hangat, angin tenang) 
+     kemungkinan besar menjadi faktor utama yang mendorong jumlah penyewaan sepeda yang tinggi. Kondisi cuaca yang kurang nyaman di musim semi (temperatur sejuk, angin kencang) dapat menghambat aktivitas bersepeda dan mengurangi jumlah penyewaan.
+     """   
+    )
+
 # Visualisasi Persebaran Jam Penyewaan
 st.header("🕰️ Puncak waktu penyewaan")
 hourly_df = create_hourly_df(hour_df)
@@ -159,11 +181,22 @@ plt.title('Distribusi Penyewaan Sepeda per Jam')
 plt.xticks(range(24))
 st.pyplot(plt)
 
-st.write(
-    """
-    Berdasarkan grafik yang ditampilkan dari analisis dataframe pada kolom hour dapat diketahui pada 08.00 AM, 05.00 PM, 06.00 PM merupakan 3 puncak penyewaan sepeda tertinggi.
-    secara jelas mengindikasikan pola perjalanan komuter. Ini menegaskan bahwa sepeda banyak digunakan sebagai moda transportasi untuk berangkat dan pulang kerja.
-    """
-)
+st.header("📊 Pola waktu penyewaan")
+g = sns.FacetGrid(hour_df, row='weekday', height=2, aspect=4)
+g.map(sns.pointplot, 'hour', 'count')
+g.set_axis_labels('Jam', 'Jumlah Penyewaan')
+plt.show()
+st.pyplot(plt)
+
+st.write("Bagaimana pola penyewaan sepeda bervariasi berdasarkan hari dalam seminggu dan jam dalam sehari?")
+with st.expander("ℹ️ Penjelasan"):
+    st.write(
+        """
+        Berdasarkan grafik yang ditampilkan dari analisis dataframe pada hari kerja senin-jumat dapat diketahui pada 08.00 AM, 05.00 PM, 06.00 PM merupakan 3 puncak penyewaan sepeda tertinggi. secara jelas mengindikasikan pola perjalanan komuter. 
+        Ini menegaskan bahwa sepeda banyak digunakan sebagai modal transportasi untuk berangkat dan pulang kerja. Pola ini memberikan peluang untuk menargetkan promosi dan layanan khusus bagi para komuter, seperti paket berlangganan bulanan atau diskon untuk penyewaan di jam-jam sibuk.
+        Penyewaan di akhir pekan menunjukkan pola yang berbeda, dengan puncak yang lebih tersebar dari jam 08.00 AM - 08.00 PM. Untuk meningkatkan penyewaan di akhir pekan perusahaan dapat memberikan promosi khusus akhir pekan, seperti diskon untuk penyewaan keluarga, tur sepeda kelompok,
+        atau acara komunitas. Dengan mengetahui jam-jam sibuk, perusahaan penyewaan sepeda dapat mengoptimalkan inventaris dan distribusi sepeda.
+        """
+    )
 
 st.caption('Copyright © 2025 Jasmine Kinasih')
