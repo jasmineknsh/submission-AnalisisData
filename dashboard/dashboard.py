@@ -32,16 +32,6 @@ def create_hourly_df(hour_df):
     hourly_df = hour_df.groupby(by='hour').agg({'count': 'sum'}).reset_index()
     return hourly_df
 
-def create_weekday_df(hour_df):
-    weekday_df = hour_df.groupby(by='weekday', observed=True).agg({
-        'count': 'sum'}).reset_index()
-    return weekday_df
-
-def create_holiday_df(hour_df):
-    holiday_df = hour_df.groupby(by='holiday', observed=True).agg({
-        'count': 'sum'}).reset_index()
-    return holiday_df
-
 # Load dataset
 hour_df = pd.read_csv("main_data.csv")
 
@@ -51,8 +41,6 @@ hour_df["date"] = pd.to_datetime(hour_df["date"])
 daily_rent_df = create_daily_rent_df(hour_df)
 byseason_df = create_by_season_df(hour_df)
 daily_hourly_df = create_hourly_df(hour_df)
-daily_weekday_df = create_weekday_df(hour_df)
-byholiday_df = create_holiday_df(hour_df)
 weather_by_season = create_by_season_df(hour_df)
 hourly_df = create_hourly_df(hour_df)
 
@@ -81,16 +69,19 @@ total_rentals_selected = get_total_rentals(daily_rent_df, start_date, end_date)
 
 st.title('📊 Dashboard Penyewaan Sepeda')
 
-# Tampilkan metrik dalam dua kolom untuk tampilan yang lebih rapi
-col1, col2 = st.columns(2)
-with col1:
-    st.metric("Total Rental dalam Rentang Waktu", value=total_rentals_selected)
+col1, col2 = st.columns([1, 2])
 
-# --- VISUALISASI TREND PENYEWAAN HARIAN ---
-st.subheader("📈 Tren Penyewaan Harian dalam Rentang Waktu")
-filtered_df = daily_rent_df[(daily_rent_df["date"] >= pd.to_datetime(start_date)) & 
-                            (daily_rent_df["date"] <= pd.to_datetime(end_date))]
-st.line_chart(filtered_df.set_index("date")["total_rentals"])
+with col1:
+    st.metric("Total Rental dalam Rentang Waktu", value=f"{total_rentals_selected:,}")
+
+with col2:
+    st.subheader("📈 Tren Penyewaan Harian")
+    filtered_df = daily_rent_df[
+        (daily_rent_df["date"] >= pd.to_datetime(start_date)) &
+        (daily_rent_df["date"] <= pd.to_datetime(end_date))
+    ]
+    st.line_chart(filtered_df.set_index("date")["total_rentals"], use_container_width=True)
+
 
 # --- STATISTIK PENYEWAAN PER MUSIM ---
 st.subheader('🌦 Statistik Penyewaan per Musim')
@@ -111,17 +102,7 @@ with st.container():
 st.subheader('🌡️ Statistik Cuaca Rata-rata per Musim')
 
 with st.container():
-    season_mapping = {
-    0: "Spring",
-    1: "Summer",
-    2: "Fall",
-    3: "Winter"
-}
-
-    weather_by_season["season"] = weather_by_season["season"].map(season_mapping)
-
-    weather_by_season.set_index("season", inplace=True)
-
+    
     weather_by_season = create_bywheatersit_df(hour_df)
 
     sum_data = weather_by_season.xs('mean', level=1, axis=1)
@@ -148,25 +129,25 @@ with st.container():
 with st.expander("ℹ️ Penjelasan"):
     st.write(
         """
-        **1. Musim Semi (Spring):**  
-        - Rata-rata temperatur lebih tinggi dari musim dingin.  
-        - Kecepatan angin tertinggi, menunjukkan kondisi angin yang lebih kencang.  
+        **1. 🌱 Musim Semi (Spring):**  
+        - Temperatur lebih tinggi dibanding musim dingin  
+        - Kecepatan angin tertinggi, menunjukkan kondisi angin lebih kencang  
 
-        **2. Musim Panas (Summer):**  
-        - Temperatur tinggi, tetapi sedikit lebih rendah dari musim gugur.  
-        - Kecepatan angin sedikit lebih tinggi dari musim gugur.  
+        **2. ☀️ Musim Panas (Summer):**  
+        - Temperatur tinggi, tetapi sedikit lebih rendah dari musim gugur  
+        - Kecepatan angin sedikit lebih tinggi dari musim gugur  
 
-        **3. Musim Gugur (Fall):**  
-        - Temperatur tertinggi, menunjukkan kondisi cuaca paling hangat.  
-        - Kecepatan angin terendah, menunjukkan kondisi angin paling tenang.  
+        **3. 🍂 Musim Gugur (Fall):**  
+        - Temperatur tertinggi, menunjukkan kondisi paling hangat  
+        - Kecepatan angin terendah, menunjukkan kondisi angin paling tenang  
 
-        **4. Musim Dingin (Winter):**  
-        - Temperatur terendah, menunjukkan kondisi cuaca paling dingin.  
-        - Kecepatan angin rendah, tetapi lebih tinggi dari musim gugur.  
+        **4. ❄️ Musim Dingin (Winter):**  
+        - Temperatur terendah, menunjukkan kondisi paling dingin  
+        - Kecepatan angin rendah, tetapi lebih tinggi dari musim gugur  
         """
     )
 
-# with st.container: # Menggunakan objek kontainer dengan with
+# Visualisasi Persebaran Jam Penyewaan
 st.header("🕰️ Puncak waktu penyewaan")
 hourly_df = create_hourly_df(hour_df)
     
